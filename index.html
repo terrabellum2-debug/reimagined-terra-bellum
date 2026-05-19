@@ -7583,7 +7583,12 @@ boot();
       <div id="mp-room-lobby" style="display:none">
         <div class="mp-room-code" id="mp-room-code-display">------</div>
         <div class="mp-room-code-sub">▸ SHARE THIS CODE WITH FRIENDS (UP TO 4 PLAYERS)</div>
-        <div class="mp-player-list" id="mp-player-list"></div>
+                <div class="mp-player-list" id="mp-player-list"></div>
+        <div class="mp-status" id="mp-lobby-status">Waiting for players...</div>
+        <button class="mp-btn outline" id="mp-pick-btn" onclick="mpPickNation()" style="margin-bottom:8px">&#127758; PICK YOUR NATION ON GLOBE</button>
+        <div class="mp-status" id="mp-pick-hint" style="display:none;color:#c9a84c">&#9658; Click any nation on the globe, then return here</div>
+        <button class="mp-btn" id="mp-return-btn" onclick="mpReturnToLobby()" style="display:none">&#8592; RETURN TO LOBBY</button>
+        <button class="mp-btn" id="mp-start-btn" onclick="mpStartGame()" disabled>&#9658; START GAME</button>
         <div class="mp-status" id="mp-lobby-status">Waiting for players…</div>
         <button class="mp-btn" id="mp-start-btn" onclick="mpStartGame()" disabled>▸ START GAME</button>
         <button class="mp-btn outline" onclick="closeMPOverlay()">← BACK</button>
