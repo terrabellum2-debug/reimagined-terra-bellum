@@ -1151,6 +1151,157 @@
     #stats-overlay { width: 100vw; top: 56px; }
   }
 
+
+  /* ── MULTIPLAYER LOBBY OVERLAY ──────────────────────────────────────────── */
+  #mp-overlay {
+    position: fixed; inset: 0; z-index: 70;
+    background: rgba(5,5,15,0.97); backdrop-filter: blur(12px);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px; overflow-y: auto;
+  }
+  #mp-overlay.open { display: flex; }
+  .mp-card {
+    width: 100%; max-width: 480px;
+    background: var(--bg-1); border: 1px solid var(--border);
+    box-shadow: 0 0 60px rgba(212,160,23,0.07);
+  }
+  .mp-card-head {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .mp-card-title {
+    font-family: 'Cinzel', serif; font-size: 1.1rem;
+    letter-spacing: .2em; color: var(--gold);
+  }
+  .mp-close {
+    background: none; border: none; color: #555; cursor: pointer;
+    font-size: 1.1rem; padding: 2px 6px;
+  }
+  .mp-close:hover { color: var(--ink); }
+  .mp-card-body { padding: 18px 22px 22px; }
+  .mp-tabs {
+    display: flex; gap: 6px; margin-bottom: 18px;
+  }
+  .mp-tab {
+    flex: 1; padding: 8px; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700; letter-spacing: .14em;
+    border: 1px solid var(--border); background: transparent;
+    color: #556; cursor: pointer; transition: all .15s;
+  }
+  .mp-tab.active { background: var(--gold); color: var(--bg-0); border-color: var(--gold); }
+  .mp-section { display: none; }
+  .mp-section.active { display: block; }
+  .mp-label { font-size: 9px; letter-spacing: .2em; color: #556; margin-bottom: 5px; }
+  .mp-input {
+    width: 100%; box-sizing: border-box;
+    background: var(--bg-0); border: 1px solid var(--border);
+    color: var(--ink); font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; letter-spacing: .08em;
+    padding: 9px 12px; margin-bottom: 12px;
+    outline: none; transition: border-color .15s;
+  }
+  .mp-input:focus { border-color: var(--gold); }
+  .mp-input.code-input { text-transform: uppercase; letter-spacing: .25em; font-size: 18px; text-align: center; }
+  .mp-btn {
+    width: 100%; padding: 11px; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 11px; letter-spacing: .18em; border: none;
+    background: var(--gold); color: var(--bg-0); transition: opacity .15s;
+    margin-top: 4px;
+  }
+  .mp-btn:hover { opacity: .88; }
+  .mp-btn:disabled { opacity: .35; cursor: default; }
+  .mp-btn.danger { background: var(--red-warn); }
+  .mp-btn.outline { background: transparent; color: var(--ink-dim); border: 1px solid var(--border); margin-top: 8px; }
+
+  /* Room lobby */
+  .mp-room-code {
+    font-family: 'Cinzel', serif; font-size: 2.2rem;
+    letter-spacing: .4em; color: var(--gold-bright);
+    text-align: center; padding: 12px 0 4px;
+  }
+  .mp-room-code-sub { font-size: 9px; color: #556; letter-spacing: .18em; text-align: center; margin-bottom: 16px; }
+  .mp-player-list { margin-bottom: 16px; }
+  .mp-player-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 10px; letter-spacing: .1em;
+  }
+  .mp-player-dot { width: 8px; height: 8px; border-radius: 50%; background: #334; }
+  .mp-player-dot.you { background: var(--red-warn); }
+  .mp-player-dot.ready { background: var(--green); }
+  .mp-player-name { flex: 1; color: var(--ink); }
+  .mp-player-nation { color: var(--gold); font-size: 9px; }
+  .mp-player-badge {
+    font-size: 8px; padding: 1px 5px; border-radius: 2px;
+    background: rgba(212,160,23,0.1); color: var(--gold); border: 1px solid rgba(212,160,23,0.2);
+    letter-spacing: .1em;
+  }
+  .mp-status { font-size: 10px; color: #556; letter-spacing: .1em; text-align: center; padding: 10px 0; }
+
+  /* In-game HUD overlay elements */
+  #mp-hud {
+    position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+    z-index: 20; display: none; flex-direction: column; align-items: center; gap: 6px;
+    pointer-events: none;
+  }
+  #mp-hud.visible { display: flex; }
+  #mp-timer-bar-wrap {
+    width: 260px; height: 4px; background: rgba(255,255,255,0.08);
+    border-radius: 2px; overflow: hidden;
+  }
+  #mp-timer-bar {
+    height: 100%; background: var(--gold); border-radius: 2px;
+    transition: width 1s linear, background .3s;
+    width: 100%;
+  }
+  #mp-timer-bar.urgent { background: var(--red-warn); }
+  #mp-timer-label {
+    font-size: 9.5px; letter-spacing: .15em; color: #667;
+    text-align: center; pointer-events: none;
+  }
+  #mp-waiting-label {
+    font-size: 9px; letter-spacing: .12em; color: #445;
+    text-align: center;
+  }
+
+  /* Chat */
+  #mp-chat {
+    position: fixed; bottom: 64px; right: 14px; z-index: 25;
+    width: 240px; display: none; flex-direction: column; gap: 0;
+  }
+  #mp-chat.visible { display: flex; }
+  #mp-chat-log {
+    max-height: 130px; overflow-y: auto;
+    background: rgba(5,5,14,0.85); border: 1px solid var(--border);
+    border-bottom: none; padding: 6px 8px;
+  }
+  .mp-chat-msg { font-size: 9px; color: var(--ink-dim); line-height: 1.5; margin-bottom: 2px; }
+  .mp-chat-msg .mp-chat-name { color: var(--gold); font-weight: 700; }
+  .mp-chat-msg.you .mp-chat-name { color: var(--red-warn); }
+  #mp-chat-form { display: flex; }
+  #mp-chat-input {
+    flex: 1; background: rgba(5,5,14,0.9); border: 1px solid var(--border);
+    color: var(--ink); font-size: 10px; padding: 5px 8px;
+    font-family: 'JetBrains Mono', monospace; outline: none;
+  }
+  #mp-chat-send {
+    background: var(--border); color: #667; border: 1px solid var(--border);
+    border-left: none; padding: 5px 8px; cursor: pointer; font-size: 10px;
+  }
+  #mp-chat-send:hover { color: var(--gold); }
+
+  /* Other-player nation highlight ring (canvas overlay label) */
+  .mp-nation-tag {
+    position: absolute; background: rgba(5,5,14,0.8);
+    border: 1px solid var(--border); border-radius: 3px;
+    font-size: 8px; padding: 2px 6px; color: var(--ink-dim);
+    pointer-events: none; letter-spacing: .08em;
+    transition: opacity .3s;
+  }
+
 </style>
 </style>
 </style>
@@ -1170,6 +1321,7 @@
   <div class="tag">A TURN-BASED CHRONICLE OF THE GLOBE</div>
   <div class="setup-menu">
     <button class="setup-menu-btn primary" id="new-game-btn">▸ NEW GAME</button>
+    <button class="setup-menu-btn" id="multiplayer-btn" onclick="openMPOverlay()">⚔ MULTIPLAYER</button>
     <button class="setup-menu-btn" id="load-game-btn" onclick="openLoadModal()">⬆ LOAD GAME</button>
   </div>
   <div class="prompt" id="setup-prompt" hidden>▸ DRAG TO ROTATE · TAP A COUNTRY TO CLAIM IT AS YOUR HOMELAND</div>
@@ -5890,6 +6042,483 @@ function showGameOver(outcome, victor, vc) {
 }
 
 
+
+// ============================================================================
+// TERRA BELLUM — MULTIPLAYER CLIENT
+// ============================================================================
+
+// ── Config — CHANGE THIS to your Render URL after deploy ─────────────────────
+const MP_SERVER_URL = 'wss://YOUR-SERVER.onrender.com';
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const MP = {
+  active:       false,   // in a multiplayer game
+  isHost:       false,   // this client runs game logic
+  ws:           null,    // WebSocket connection
+  roomCode:     null,
+  playerId:     null,
+  myNationId:   null,    // which nation this player controls
+  allNations:   {},      // { playerId: nationId } for all humans
+  actionQueue:  [],      // actions queued this turn (non-host)
+  submitted:    false,   // already submitted this turn
+  turnMs:       120000,
+  timerEnd:     null,
+  timerRaf:     null,
+  waitingFor:   0,       // how many players haven't submitted
+  reconnectData: null    // { code, playerId } for reconnect attempts
+};
+
+// ── Overlay UI ────────────────────────────────────────────────────────────────
+function openMPOverlay() {
+  document.getElementById('mp-overlay').classList.add('open');
+}
+function closeMPOverlay() {
+  document.getElementById('mp-overlay').classList.remove('open');
+}
+function mpTab(tab) {
+  document.getElementById('mpt-create').classList.toggle('active', tab === 'create');
+  document.getElementById('mpt-join').classList.toggle('active',   tab === 'join');
+  document.getElementById('mps-create').classList.toggle('active', tab === 'create');
+  document.getElementById('mps-join').classList.toggle('active',   tab === 'join');
+}
+window.openMPOverlay = openMPOverlay;
+window.closeMPOverlay = closeMPOverlay;
+window.mpTab = mpTab;
+
+// ── WebSocket connection ──────────────────────────────────────────────────────
+function mpConnect(onOpen) {
+  const statusEl = document.getElementById('mp-connecting-status');
+  statusEl.style.display = 'block';
+  statusEl.textContent = 'Connecting to server…';
+
+  // Close any existing connection
+  if (MP.ws) { try { MP.ws.close(); } catch {} }
+
+  MP.ws = new WebSocket(MP_SERVER_URL);
+
+  MP.ws.onopen = () => {
+    statusEl.style.display = 'none';
+    onOpen();
+  };
+  MP.ws.onmessage = e => {
+    let msg; try { msg = JSON.parse(e.data); } catch { return; }
+    mpHandleMessage(msg);
+  };
+  MP.ws.onerror = () => {
+    statusEl.textContent = '✗ Connection failed. Check your internet connection.';
+  };
+  MP.ws.onclose = () => {
+    if (MP.active) {
+      mpAppendChat('System', 'Connection lost. Attempting to reconnect…', true);
+      setTimeout(mpAttemptReconnect, 3000);
+    }
+  };
+}
+
+function mpSend(msg) {
+  if (MP.ws && MP.ws.readyState === WebSocket.OPEN) {
+    MP.ws.send(JSON.stringify(msg));
+  }
+}
+
+// ── Create room ───────────────────────────────────────────────────────────────
+function mpCreateRoom() {
+  const name     = document.getElementById('mp-create-name').value.trim() || 'Player 1';
+  const scenario = document.getElementById('mp-create-scenario').value;
+  document.getElementById('mp-create-btn').disabled = true;
+  mpConnect(() => mpSend({ type: 'CREATE_ROOM', playerName: name, scenario }));
+}
+window.mpCreateRoom = mpCreateRoom;
+
+// ── Join room ─────────────────────────────────────────────────────────────────
+function mpJoinRoom() {
+  const name = document.getElementById('mp-join-name').value.trim() || 'Player';
+  const code = document.getElementById('mp-join-code').value.trim().toUpperCase();
+  if (code.length < 4) { alert('Enter a room code'); return; }
+  document.getElementById('mp-join-btn').disabled = true;
+  mpConnect(() => mpSend({ type: 'JOIN_ROOM', playerName: name, code }));
+}
+window.mpJoinRoom = mpJoinRoom;
+
+// ── Start game (host only) ────────────────────────────────────────────────────
+function mpStartGame() {
+  mpSend({ type: 'START_GAME' });
+}
+window.mpStartGame = mpStartGame;
+
+// ── Show room lobby ───────────────────────────────────────────────────────────
+function mpShowRoomLobby(code, players) {
+  document.getElementById('mp-lobby-tabs').style.display = 'none';
+  document.getElementById('mp-room-lobby').style.display = 'block';
+  document.getElementById('mp-room-code-display').textContent = code;
+  document.getElementById('mp-start-btn').disabled = !MP.isHost;
+  mpRenderPlayerList(players);
+}
+
+function mpRenderPlayerList(players) {
+  const el = document.getElementById('mp-player-list');
+  el.innerHTML = players.map(p => {
+    const isMe = p.id === MP.playerId;
+    const nation = p.nationId
+      ? (S.countries[p.nationId]?.name || p.nationId)
+      : '— no nation picked';
+    return `<div class="mp-player-row">
+      <div class="mp-player-dot${isMe ? ' you' : p.nationId ? ' ready' : ''}"></div>
+      <span class="mp-player-name">${p.name}${isMe ? ' (you)' : ''}</span>
+      <span class="mp-player-nation">${nation}</span>
+      ${p.isHost ? '<span class="mp-player-badge">HOST</span>' : ''}
+    </div>`;
+  }).join('');
+  const allPicked = players.filter(p => p.nationId).length;
+  document.getElementById('mp-lobby-status').textContent =
+    `${allPicked}/${players.length} nations chosen`;
+  if (MP.isHost) {
+    document.getElementById('mp-start-btn').disabled = allPicked < 1;
+  }
+}
+
+// ── Incoming message handler ──────────────────────────────────────────────────
+function mpHandleMessage(msg) {
+  switch (msg.type) {
+
+    case 'ROOM_CREATED':
+      MP.playerId = msg.playerId;
+      MP.roomCode = msg.code;
+      MP.isHost   = true;
+      mpShowRoomLobby(msg.code, [{ id: msg.playerId, name: 'You', nationId: null, isHost: true }]);
+      break;
+
+    case 'ROOM_JOINED':
+      MP.playerId = msg.playerId;
+      MP.roomCode = msg.code;
+      MP.isHost   = false;
+      mpShowRoomLobby(msg.code, msg.players);
+      break;
+
+    case 'PLAYER_JOINED':
+    case 'NATION_PICKED':
+      mpRenderPlayerList(msg.players);
+      break;
+
+    case 'GAME_START':
+      MP.active     = true;
+      MP.myNationId = msg.nationId;
+      MP.isHost     = msg.isHost;
+      MP.allNations = msg.allNations || {};
+      closeMPOverlay();
+      // Launch game as singleplayer — then override humanId for this player
+      // The host picks a scenario first via the normal flow,
+      // non-host players get their nationId and just render
+      if (msg.nationId) {
+        mpLaunchGame(msg.nationId, msg.scenario, msg.isHost);
+      }
+      mpShowHUD();
+      mpShowChat();
+      mpStartCountdown(MP.turnMs);
+      log(`Multiplayer game started. You are playing as ${S.players[msg.nationId]?.name || msg.nationId}.`, 'good');
+      break;
+
+    case 'TIMER_START':
+      MP.turnMs = msg.ms || 120000;
+      mpStartCountdown(MP.turnMs);
+      break;
+
+    case 'PLAYER_SUBMITTED':
+      MP.waitingFor = msg.remaining || 0;
+      document.getElementById('mp-waiting-label').textContent =
+        msg.remaining > 0
+          ? `Waiting for ${msg.remaining} player${msg.remaining > 1 ? 's' : ''}…`
+          : 'All submitted — resolving…';
+      break;
+
+    case 'RESOLVE_TURN':
+      // Only host receives this
+      if (!MP.isHost) return;
+      mpHostResolveTurn(msg.queues || {});
+      break;
+
+    case 'TURN_RESOLVED':
+      // Non-host receives this
+      if (MP.isHost) return;
+      mpApplyResolvedState(msg.S, msg.log, msg.turn);
+      if (!msg.gameOver) mpResetTurnState();
+      break;
+
+    case 'YOU_ARE_HOST':
+      MP.isHost = true;
+      log('You are now the host — you control game resolution.', 'good');
+      break;
+
+    case 'PLAYER_DISCONNECTED':
+      mpAppendChat('System', `A player disconnected.`, true);
+      break;
+
+    case 'PLAYER_RECONNECTED':
+      mpAppendChat('System', `A player reconnected.`, true);
+      if (msg.players) mpRenderPlayerList(msg.players);
+      break;
+
+    case 'RECONNECTED':
+      MP.active     = true;
+      MP.isHost     = msg.isHost;
+      MP.myNationId = msg.nationId;
+      mpApplyResolvedState(msg.S, [], msg.turn);
+      mpShowHUD();
+      mpShowChat();
+      const msLeft = msg.msRemaining || 120000;
+      mpStartCountdown(msLeft);
+      log('Reconnected to game.', 'good');
+      break;
+
+    case 'CHAT':
+      const isMe = msg.playerId === MP.playerId;
+      mpAppendChat(msg.name, msg.msg, false, isMe);
+      break;
+
+    case 'ERROR':
+      alert(`Server: ${msg.message}`);
+      document.getElementById('mp-create-btn').disabled = false;
+      document.getElementById('mp-join-btn').disabled = false;
+      document.getElementById('mp-connecting-status').style.display = 'none';
+      break;
+  }
+}
+
+// ── Launch game from multiplayer ──────────────────────────────────────────────
+function mpLaunchGame(nationId, scenarioId, isHost) {
+  // Trigger the normal game start flow
+  // First ensure world is initialised
+  if (!S.players[nationId]) {
+    console.warn('MP: nation not in S yet — will retry');
+    setTimeout(() => mpLaunchGame(nationId, scenarioId, isHost), 200);
+    return;
+  }
+  S.activeScenario = scenarioId;
+  startGame(nationId);  // existing startGame function handles full init
+}
+
+// ── Host: apply all player queues then run normal endTurn ─────────────────────
+function mpHostResolveTurn(queues) {
+  // Apply non-host players' actions in turn order
+  for (const [pid, actions] of Object.entries(queues)) {
+    if (pid === MP.playerId) continue;          // host already acted
+    if (!actions || !actions.length) continue;
+    const savedHuman = S.humanId;
+    S.humanId = room_playerNationId(pid);       // temporarily become that player
+    if (!S.humanId) { S.humanId = savedHuman; continue; }
+    for (const action of actions) {
+      mpApplyAction(action);
+    }
+    S.humanId = savedHuman;
+  }
+
+  // Run the normal endTurn (host's humanId is already correct)
+  endTurn();
+
+  // After endTurn, broadcast new S to server
+  const log_entries = S.log.slice(0, 30).map(l => ({ date: l.date, msg: l.msg, cls: l.cls }));
+  mpSend({
+    type:    'TURN_RESOLVED',
+    S:       mpSerialiseS(),
+    log:     log_entries,
+    turn:    S.turn,
+    gameOver: S.gameOver
+  });
+
+  if (!S.gameOver) mpResetTurnState();
+}
+
+function room_playerNationId(pid) {
+  return MP.allNations[pid] || null;
+}
+
+// Apply a single serialised action with S.humanId already set
+function mpApplyAction(action) {
+  if (!action || !action.fn) return;
+  const allowed = ['doAttack','doBuildArmy','doMoveArmy','doDevelop',
+                   'doAdvanceEra','doTakeLoan','doDiplomacy','doBuild',
+                   'doResearchTech','doProposeNAP','doProposeMarriage',
+                   'doSpyOp'];
+  if (!allowed.includes(action.fn)) return;
+  const fn = window[action.fn];
+  if (typeof fn !== 'function') return;
+  try { fn.apply(null, action.args || []); } catch(e) { console.warn('mpApplyAction error:', e); }
+}
+
+// ── Non-host: receive and apply resolved state ────────────────────────────────
+function mpApplyResolvedState(newS, logEntries, turn) {
+  if (!newS) return;
+  // Merge authoritative state — preserve rotation/scale (cosmetic)
+  const rot = S.rotation, sc = S.scale;
+  Object.assign(S, newS);
+  S.rotation = rot; S.scale = sc;
+  // Append log entries from host
+  for (const entry of (logEntries || [])) {
+    if (entry && !S.log.find(l => l.msg === entry.msg && l.date === entry.date)) {
+      S.log.unshift(entry);
+    }
+  }
+  if (S.log.length > 80) S.log.length = 80;
+  renderLog();
+  updateDate();
+  updateHUD();
+  render();
+  mpResetTurnState();
+}
+
+// ── Serialise S (strip WebSocket/DOM refs) ────────────────────────────────────
+function mpSerialiseS() {
+  // JSON.stringify/parse to deep clone and drop non-serialisable refs
+  try {
+    return JSON.parse(JSON.stringify(S, (k, v) => {
+      if (v instanceof HTMLElement || v instanceof CanvasRenderingContext2D) return undefined;
+      return v;
+    }));
+  } catch(e) { console.error('mpSerialiseS error:', e); return {}; }
+}
+
+// ── Turn state management ─────────────────────────────────────────────────────
+function mpResetTurnState() {
+  MP.actionQueue = [];
+  MP.submitted   = false;
+  MP.waitingFor  = 0;
+  document.getElementById('end-turn').disabled = false;
+  document.getElementById('mp-waiting-label').textContent = '';
+  mpStartCountdown(MP.turnMs);
+  renderStatsPanel();
+}
+
+// ── Timer countdown ───────────────────────────────────────────────────────────
+function mpStartCountdown(ms) {
+  if (MP.timerRaf) cancelAnimationFrame(MP.timerRaf);
+  MP.timerEnd = Date.now() + ms;
+  mpTickTimer();
+}
+function mpTickTimer() {
+  const remaining = Math.max(0, MP.timerEnd - Date.now());
+  const pct = (remaining / MP.turnMs) * 100;
+  const secs = Math.ceil(remaining / 1000);
+  const mm = String(Math.floor(secs / 60)).padStart(1,'0');
+  const ss = String(secs % 60).padStart(2,'0');
+  const bar = document.getElementById('mp-timer-bar');
+  const lbl = document.getElementById('mp-timer-label');
+  if (bar) {
+    bar.style.width = pct + '%';
+    bar.classList.toggle('urgent', pct < 20);
+  }
+  if (lbl) lbl.textContent = `PLANNING PHASE · ${mm}:${ss}`;
+  if (remaining > 0) MP.timerRaf = requestAnimationFrame(mpTickTimer);
+}
+
+function mpShowHUD() {
+  document.getElementById('mp-hud').classList.add('visible');
+}
+function mpShowChat() {
+  document.getElementById('mp-chat').classList.add('visible');
+}
+
+// ── Intercept endTurn for multiplayer ─────────────────────────────────────────
+const _origEndTurn = window.endTurn;
+window.endTurn = function() {
+  if (!MP.active) { _origEndTurn(); return; }
+  if (MP.submitted) return;  // already submitted
+  MP.submitted = true;
+  document.getElementById('end-turn').disabled = true;
+  document.getElementById('end-turn').textContent = '⏳ SUBMITTED';
+  document.getElementById('mp-waiting-label').textContent = 'Waiting for other players…';
+  // Submit queue to server
+  mpSend({ type: 'SUBMIT_TURN', actions: MP.actionQueue });
+  // Host still runs full turn when server sends RESOLVE_TURN
+};
+
+// ── Action queue interceptors ─────────────────────────────────────────────────
+// For non-host players: capture actions so they can be sent to host for resolution.
+// Actions are applied LOCALLY (optimistic) AND queued.
+const _mpQueueAction = (fn, args) => {
+  if (MP.active && !MP.isHost && !MP.submitted) {
+    MP.actionQueue.push({ fn, args: Array.from(args) });
+  }
+};
+
+['doAttack','doBuildArmy','doMoveArmy','doDevelop','doAdvanceEra',
+ 'doTakeLoan','doDiplomacy','doBuild','doResearchTech',
+ 'doProposeNAP','doProposeMarriage','doSpyOp'].forEach(fnName => {
+  const orig = window[fnName];
+  if (typeof orig !== 'function') return;
+  window[fnName] = function() {
+    _mpQueueAction(fnName, arguments);
+    return orig.apply(this, arguments);
+  };
+});
+
+// ── Chat ──────────────────────────────────────────────────────────────────────
+function mpSendChat() {
+  const input = document.getElementById('mp-chat-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  mpSend({ type: 'CHAT', msg: text });
+  input.value = '';
+}
+window.mpSendChat = mpSendChat;
+
+function mpAppendChat(name, text, isSystem, isMe) {
+  const log = document.getElementById('mp-chat-log');
+  if (!log) return;
+  const div = document.createElement('div');
+  div.className = 'mp-chat-msg' + (isMe ? ' you' : '');
+  div.innerHTML = isSystem
+    ? `<span style="color:#445">${text}</span>`
+    : `<span class="mp-chat-name">${name}:</span> ${text}`;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+  // Trim to 60 messages
+  while (log.children.length > 60) log.removeChild(log.firstChild);
+}
+
+// ── Reconnect ─────────────────────────────────────────────────────────────────
+function mpAttemptReconnect() {
+  if (!MP.roomCode || !MP.playerId) return;
+  mpConnect(() => {
+    mpSend({ type: 'RECONNECT', code: MP.roomCode, playerId: MP.playerId });
+  });
+}
+
+// Save reconnect data to sessionStorage
+window.addEventListener('beforeunload', () => {
+  if (MP.active) {
+    sessionStorage.setItem('tb_mp_reconnect', JSON.stringify({
+      code: MP.roomCode, playerId: MP.playerId
+    }));
+  }
+});
+// On load: check for reconnect
+window.addEventListener('load', () => {
+  const saved = sessionStorage.getItem('tb_mp_reconnect');
+  if (saved) {
+    try {
+      const d = JSON.parse(saved);
+      if (d.code && d.playerId) {
+        MP.reconnectData = d;
+        sessionStorage.removeItem('tb_mp_reconnect');
+        // Ask user if they want to reconnect
+        if (confirm(`Reconnect to room ${d.code}?`)) {
+          mpConnect(() => mpSend({ type: 'RECONNECT', code: d.code, playerId: d.playerId }));
+        }
+      }
+    } catch {}
+  }
+});
+
+// ── END-TURN button text reset between turns ──────────────────────────────────
+const _origUpdateHUD = window.updateHUD || function(){};
+window.updateHUD = function() {
+  _origUpdateHUD.apply(this, arguments);
+  if (MP.active && !MP.submitted) {
+    const btn = document.getElementById('end-turn');
+    if (btn) btn.textContent = 'END TURN ▸';
+  }
+};
+
 // ============================================================================
 // WORLD STATS PANEL
 // Rebuilt every time the panel is opened or a turn ends.
@@ -6878,5 +7507,79 @@ window.addEventListener('error', function(ev) {
 
 boot();
 </script>
+
+<!-- ── MULTIPLAYER LOBBY OVERLAY ── -->
+<div id="mp-overlay">
+  <div class="mp-card">
+    <div class="mp-card-head">
+      <span class="mp-card-title">MULTIPLAYER</span>
+      <button class="mp-close" onclick="closeMPOverlay()">✕</button>
+    </div>
+    <div class="mp-card-body">
+
+      <!-- Create / Join tabs -->
+      <div id="mp-lobby-tabs">
+        <div class="mp-tabs">
+          <button class="mp-tab active" id="mpt-create" onclick="mpTab('create')">▸ CREATE ROOM</button>
+          <button class="mp-tab"        id="mpt-join"   onclick="mpTab('join')">↗ JOIN ROOM</button>
+        </div>
+
+        <div class="mp-section active" id="mps-create">
+          <div class="mp-label">YOUR NAME</div>
+          <input class="mp-input" id="mp-create-name" placeholder="Enter your name" maxlength="20">
+          <div class="mp-label" style="margin-top:8px">SCENARIO</div>
+          <select class="mp-input" id="mp-create-scenario" style="cursor:pointer">
+            <option value="sandbox">🌐 Sandbox (1450 AD)</option>
+            <option value="ancient">⚔️ Ancient World (218 BC)</option>
+            <option value="medieval">✝️ Medieval Christendom (1096 AD)</option>
+            <option value="victorian">🎩 Victorian Era (1850 AD)</option>
+            <option value="ww1">🪖 World War I (1914)</option>
+            <option value="ww2">💣 World War II (1939)</option>
+            <option value="coldwar">☢️ Cold War (1947)</option>
+          </select>
+          <button class="mp-btn" id="mp-create-btn" onclick="mpCreateRoom()">▸ CREATE ROOM</button>
+        </div>
+
+        <div class="mp-section" id="mps-join">
+          <div class="mp-label">YOUR NAME</div>
+          <input class="mp-input" id="mp-join-name" placeholder="Enter your name" maxlength="20">
+          <div class="mp-label" style="margin-top:8px">ROOM CODE</div>
+          <input class="mp-input code-input" id="mp-join-code" placeholder="XXXXXX" maxlength="6">
+          <button class="mp-btn" id="mp-join-btn" onclick="mpJoinRoom()">↗ JOIN ROOM</button>
+        </div>
+      </div>
+
+      <!-- Room lobby (shown after create/join) -->
+      <div id="mp-room-lobby" style="display:none">
+        <div class="mp-room-code" id="mp-room-code-display">------</div>
+        <div class="mp-room-code-sub">▸ SHARE THIS CODE WITH FRIENDS (UP TO 4 PLAYERS)</div>
+        <div class="mp-player-list" id="mp-player-list"></div>
+        <div class="mp-status" id="mp-lobby-status">Waiting for players…</div>
+        <button class="mp-btn" id="mp-start-btn" onclick="mpStartGame()" disabled>▸ START GAME</button>
+        <button class="mp-btn outline" onclick="closeMPOverlay()">← BACK</button>
+      </div>
+
+      <div class="mp-status" id="mp-connecting-status" style="display:none">Connecting…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── IN-GAME MULTIPLAYER HUD ── -->
+<div id="mp-hud">
+  <div id="mp-timer-label">PLANNING PHASE · 2:00</div>
+  <div id="mp-timer-bar-wrap"><div id="mp-timer-bar"></div></div>
+  <div id="mp-waiting-label"></div>
+</div>
+
+<!-- ── IN-GAME CHAT ── -->
+<div id="mp-chat">
+  <div id="mp-chat-log"></div>
+  <div id="mp-chat-form">
+    <input id="mp-chat-input" placeholder="Chat…" maxlength="200"
+           onkeydown="if(event.key==='Enter')mpSendChat()">
+    <button id="mp-chat-send" onclick="mpSendChat()">▸</button>
+  </div>
+</div>
+
 </body>
 </html>
