@@ -6048,7 +6048,7 @@ function showGameOver(outcome, victor, vc) {
 // ============================================================================
 
 // ── Config — CHANGE THIS to your Render URL after deploy ─────────────────────
-const MP_SERVER_URL = 'wss://terra-bellum-server.onrender.com/ping';
+const MP_SERVER_URL = 'wss://YOUR-SERVER.onrender.com';
 
 // ── State ─────────────────────────────────────────────────────────────────────
 const MP = {
@@ -6145,6 +6145,30 @@ function mpStartGame() {
   mpSend({ type: 'START_GAME' });
 }
 window.mpStartGame = mpStartGame;
+
+// Pick nation flow   hides overlay so player can click the globe
+function mpPickNation() {
+  MP.pickingNation = true;
+  document.getElementById("mp-overlay").classList.remove("open");
+  document.getElementById("setup-prompt").hidden = false;
+  // Show return button hint at top
+  const ret = document.getElementById("mp-return-btn");
+  const hint = document.getElementById("mp-pick-hint");
+  if (ret) ret.style.display = "block";
+  if (hint) hint.style.display = "block";
+}
+window.mpPickNation = mpPickNation;
+
+function mpReturnToLobby() {
+  MP.pickingNation = false;
+  document.getElementById("setup-prompt").hidden = true;
+  document.getElementById("mp-overlay").classList.add("open");
+  const ret = document.getElementById("mp-return-btn");
+  const hint = document.getElementById("mp-pick-hint");
+  if (ret) ret.style.display = "none";
+  if (hint) hint.style.display = "none";
+}
+window.mpReturnToLobby = mpReturnToLobby;
 
 // ── Show room lobby ───────────────────────────────────────────────────────────
 function mpShowRoomLobby(code, players) {
@@ -7151,9 +7175,15 @@ window.setMoveFraction = function(f) {
 function handleSelect(id) {
   if (S.gameOver) return;
   if (S.setupPhase) {
-    // Pick starting country
     const c = S.countries[id];
     if (!c) return;
+    // Multiplayer: send nation pick to server, do not start game yet
+    if (MP.pickingNation) {
+      MP.myNationId = id;
+      mpSend({ type: "PICK_NATION", nationId: id });
+      mpReturnToLobby();
+      return;
+    }
     startGame(id);
     return;
   }
